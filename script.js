@@ -838,13 +838,12 @@ $(document).ready(function() {
         console.log('Đã xóa cache câu hỏi');
     }
 
-    // Thêm nút xóa cache vào phía dưới cùng của trang
-    $('body').append('<button id="clear-cache" class="fixed bottom-4 right-4 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg text-sm">Xóa Cache</button>');
-    
-    // Xử lý sự kiện xóa cache
-    $('#clear-cache').click(function() {
-        clearQuestionCache();
-        localStorage.removeItem('histoQuiz_state');
-        showQuickToast('Đã xóa toàn bộ cache!', 'success', 2000);
+    // Xử lý sự kiện khi người dùng quay lại trang chọn chủ đề
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tự động xóa cache khi người dùng quay lại trang chủ
+        if (window.location.hash === '' || window.location.hash === '#') {
+            clearQuestionCache();
+            localStorage.removeItem('histoQuiz_state');
+        }
     });
 }); 
