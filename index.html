@@ -67,6 +67,127 @@
         }
     </script>
     <style>
+        /* Base styles for all screens */
+        .option-box.selected {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+        }
+        
+        .answer-option {
+            transition: all 0.3s ease;
+        }
+        
+        .answer-option:hover {
+            background-color: #f0f9ff;
+        }
+        
+        .answer-selected {
+            background-color: #dbeafe !important;
+            border-color: #3b82f6 !important;
+        }
+        
+        .answer-correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+        }
+        
+        .answer-wrong {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a3a3a3;
+        }
+        
+        /* Topic card structure */
+        .topic-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        
+        .card-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-content svg {
+            margin-bottom: 0.5rem;
+        }
+        
+        .topic-card .text-base {
+            font-size: 1rem !important;
+        }
+        
+        .topic-card .question-count {
+            font-weight: 500;
+        }
+        
+        /* Desktop improvements */
+        @media (min-width: 768px) {
+            .grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            
+            .topic-card {
+                min-height: 250px;
+            }
+            
+            .topic-card h3 {
+                font-size: 1.25rem !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                padding: 0 0.5rem !important;
+                text-transform: uppercase !important;
+            }
+            
+            .topic-card p {
+                font-size: 0.9rem;
+                line-height: 1.5;
+                height: 4.5em;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+            }
+            
+            .topic-card .question-count {
+                font-size: 0.6rem;
+                padding: 0.25rem 0.75rem;
+            }
+            
+            .topic-card .text-base {
+                font-weight: 500;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            
+            .topic-card {
+                min-height: 270px;
+            }
+        }
+        
         @media (max-width: 640px) {
             .answer-option {
                 padding: 0.75rem !important;
@@ -82,7 +203,66 @@
             }
             
             .topic-card {
+                margin-bottom: 1.25rem;
+                min-height: 230px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                padding: 1.25rem !important;
+            }
+            
+            #topic-selection {
+                padding: 1.5rem 1.25rem !important;
+            }
+            
+            .question-count {
+                padding: 0.3rem 0.75rem;
+                font-weight: 500;
+            }
+            
+            .card-content {
                 margin-bottom: 1rem;
+            }
+            
+            h3.font-semibold {
+                font-size: 1.25rem !important;
+                margin-bottom: 0.5rem !important;
+                text-transform: uppercase !important;
+            }
+            
+            .topic-card p {
+                font-size: 0.9rem !important;
+                line-height: 1.4;
+            }
+            
+            .topic-card .text-base {
+                font-size: 1.1rem !important;
+                font-weight: 600;
+            }
+        }
+        
+        @media (min-width: 1280px) {
+            .topic-card {
+                min-height: 280px;
+            }
+            
+            .topic-card h3 {
+                font-size: 1.3rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .topic-card p {
+                font-size: 1rem;
+                line-height: 1.6;
+                height: 4.8em;
+            }
+            
+            .container {
+                max-width: 1200px;
+            }
+            
+            #topic-selection .grid {
+                column-gap: 1.5rem;
             }
         }
     </style>
@@ -98,76 +278,86 @@
         </header>
 
         <!-- Phần chọn chủ đề -->
-        <div id="topic-selection" class="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
-            <h2 class="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-center">Chọn chủ đề</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                <div class="topic-card bg-gradient-to-br from-amber-50 to-amber-100 p-4 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-amber-300">
-                    <div class="mb-2 sm:mb-3 text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
+        <div id="topic-selection" class="bg-white rounded-lg shadow-lg p-5 sm:p-6 mb-6 sm:mb-8">
+            <h2 class="text-2xl sm:text-2xl font-semibold mb-5 sm:mb-6 text-center">Chọn chủ đề</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                <div class="topic-card bg-gradient-to-br from-amber-50 to-amber-100 p-5 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-amber-300">
+                    <div class="card-content">
+                        <div class="mb-4 sm:mb-3 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 sm:h-12 sm:w-12 mx-auto text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-lg sm:text-lg text-center text-amber-800 mb-2 sm:mb-2">Thời kỳ Bắc thuộc</h3>
+                        <p class="text-sm sm:text-sm text-gray-600 text-center mb-3 sm:mb-3">Khám phá lịch sử và các cuộc khởi nghĩa giành độc lập từ năm 111 TCN đến 939</p>
                     </div>
-                    <h3 class="font-semibold text-base sm:text-lg text-center text-amber-800 mb-1 sm:mb-2">Thời kỳ Bắc thuộc</h3>
-                    <p class="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">Khám phá lịch sử và các cuộc khởi nghĩa giành độc lập từ năm 111 TCN đến 939</p>
                     <div class="flex justify-between items-center">
-                        <span class="question-count bg-amber-200 text-amber-800 text-xs px-2 py-1 rounded-full">Đang tải...</span>
-                        <span class="text-amber-600 text-sm sm:text-base">Bắt đầu →</span>
+                        <span class="question-count bg-amber-200 text-amber-800 text-sm px-3 py-1 rounded-full">Đang tải...</span>
+                        <span class="text-amber-600 text-base sm:text-base font-medium">Bắt đầu →</span>
                     </div>
                 </div>
                 
-                <div class="topic-card bg-gradient-to-br from-blue-50 to-blue-100 p-4 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-blue-300">
-                    <div class="mb-2 sm:mb-3 text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
+                <div class="topic-card bg-gradient-to-br from-blue-50 to-blue-100 p-5 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-blue-300">
+                    <div class="card-content">
+                        <div class="mb-4 sm:mb-3 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 sm:h-12 sm:w-12 mx-auto text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-lg sm:text-lg text-center text-blue-800 mb-2 sm:mb-2">Thời kỳ Đại Việt</h3>
+                        <p class="text-sm sm:text-sm text-gray-600 text-center mb-3 sm:mb-3">Tìm hiểu về thời kỳ phong kiến và các triều đại Việt Nam từ thế kỷ X đến XIX</p>
                     </div>
-                    <h3 class="font-semibold text-base sm:text-lg text-center text-blue-800 mb-1 sm:mb-2">Thời kỳ Đại Việt</h3>
-                    <p class="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">Tìm hiểu về thời kỳ phong kiến và các triều đại Việt Nam từ thế kỷ X đến XIX</p>
                     <div class="flex justify-between items-center">
-                        <span class="question-count bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full">Đang tải...</span>
-                        <span class="text-blue-600 text-sm sm:text-base">Bắt đầu →</span>
+                        <span class="question-count bg-blue-200 text-blue-800 text-sm px-3 py-1 rounded-full">Đang tải...</span>
+                        <span class="text-blue-600 text-base sm:text-base font-medium">Bắt đầu →</span>
                     </div>
                 </div>
                 
-                <div class="topic-card bg-gradient-to-br from-red-50 to-red-100 p-4 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-red-300">
-                    <div class="mb-2 sm:mb-3 text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
-                        </svg>
+                <div class="topic-card bg-gradient-to-br from-red-50 to-red-100 p-5 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-red-300">
+                    <div class="card-content">
+                        <div class="mb-4 sm:mb-3 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 sm:h-12 sm:w-12 mx-auto text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-lg sm:text-lg text-center text-red-800 mb-2 sm:mb-2">Cách mạng Việt Nam</h3>
+                        <p class="text-sm sm:text-sm text-gray-600 text-center mb-3 sm:mb-3">Khám phá con đường đấu tranh giành độc lập và thống nhất đất nước</p>
                     </div>
-                    <h3 class="font-semibold text-base sm:text-lg text-center text-red-800 mb-1 sm:mb-2">Cách mạng Việt Nam</h3>
-                    <p class="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">Khám phá con đường đấu tranh giành độc lập và thống nhất đất nước</p>
                     <div class="flex justify-between items-center">
-                        <span class="question-count bg-red-200 text-red-800 text-xs px-2 py-1 rounded-full">Đang tải...</span>
-                        <span class="text-red-600 text-sm sm:text-base">Bắt đầu →</span>
+                        <span class="question-count bg-red-200 text-red-800 text-sm px-3 py-1 rounded-full">Đang tải...</span>
+                        <span class="text-red-600 text-base sm:text-base font-medium">Bắt đầu →</span>
                     </div>
                 </div>
                 
-                <div class="topic-card bg-gradient-to-br from-green-50 to-green-100 p-4 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-green-300">
-                    <div class="mb-2 sm:mb-3 text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
+                <div class="topic-card bg-gradient-to-br from-green-50 to-green-100 p-5 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-green-300">
+                    <div class="card-content">
+                        <div class="mb-4 sm:mb-3 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 sm:h-12 sm:w-12 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-lg sm:text-lg text-center text-green-800 mb-2 sm:mb-2">Việt Nam hiện đại</h3>
+                        <p class="text-sm sm:text-sm text-gray-600 text-center mb-3 sm:mb-3">Tìm hiểu về quá trình xây dựng và phát triển đất nước từ 1975 đến nay</p>
                     </div>
-                    <h3 class="font-semibold text-base sm:text-lg text-center text-green-800 mb-1 sm:mb-2">Việt Nam hiện đại</h3>
-                    <p class="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">Tìm hiểu về quá trình xây dựng và phát triển đất nước từ 1975 đến nay</p>
                     <div class="flex justify-between items-center">
-                        <span class="question-count bg-green-200 text-green-800 text-xs px-2 py-1 rounded-full">Đang tải...</span>
-                        <span class="text-green-600 text-sm sm:text-base">Bắt đầu →</span>
+                        <span class="question-count bg-green-200 text-green-800 text-sm px-3 py-1 rounded-full">Đang tải...</span>
+                        <span class="text-green-600 text-base sm:text-base font-medium">Bắt đầu →</span>
                     </div>
                 </div>
                 
-                <div class="topic-card bg-gradient-to-br from-purple-50 to-purple-100 p-4 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-purple-300">
-                    <div class="mb-2 sm:mb-3 text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                        </svg>
+                <div class="topic-card bg-gradient-to-br from-purple-50 to-purple-100 p-5 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-purple-300">
+                    <div class="card-content">
+                        <div class="mb-4 sm:mb-3 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 sm:h-12 sm:w-12 mx-auto text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-lg sm:text-lg text-center text-purple-800 mb-2 sm:mb-2">Tạo ngẫu nhiên</h3>
+                        <p class="text-sm sm:text-sm text-gray-600 text-center mb-3 sm:mb-3">Trải nghiệm bài kiểm tra đa dạng với câu hỏi từ tất cả các chủ đề</p>
                     </div>
-                    <h3 class="font-semibold text-base sm:text-lg text-center text-purple-800 mb-1 sm:mb-2">Tạo ngẫu nhiên</h3>
-                    <p class="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">Trải nghiệm bài kiểm tra đa dạng với câu hỏi từ tất cả các chủ đề</p>
                     <div class="flex justify-between items-center">
-                        <span class="question-count bg-purple-200 text-purple-800 text-xs px-2 py-1 rounded-full">Đang tải...</span>
-                        <span class="text-purple-600 text-sm sm:text-base">Bắt đầu →</span>
+                        <span class="question-count bg-purple-200 text-purple-800 text-sm px-3 py-1 rounded-full">Đang tải...</span>
+                        <span class="text-purple-600 text-base sm:text-base font-medium">Bắt đầu →</span>
                     </div>
                 </div>
             </div>
