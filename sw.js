@@ -42,6 +42,11 @@ self.addEventListener('activate', function(event) {
 
 // Xử lý các request - Cache-first strategy
 self.addEventListener('fetch', function(event) {
+  // Bỏ qua các URL không phải HTTP/HTTPS
+  if (!event.request.url.startsWith('http')) {
+    return;
+  }
+  
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
@@ -60,17 +65,32 @@ self.addEventListener('fetch', function(event) {
               return response;
             }
             
-            // Clone response vì nó chỉ có thể được sử dụng một lần
-            const responseToCache = response.clone();
-            
-            caches.open(CACHE_NAME)
-              .then(function(cache) {
-                cache.put(event.request, responseToCache);
-              });
+            // Chỉ cache các request HTTP/HTTPS
+            if (fetchRequest.url.startsWith('http')) {
+              // Clone response vì nó chỉ có thể được sử dụng một lần
+              const responseToCache = response.clone();
               
+              caches.open(CACHE_NAME)
+                .then(function(cache) {
+                  cache.put(event.request, responseToCache);
+                })
+                .catch(function(error) {
+                  console.error('Cache error:', error);
+                });
+            }
+            
             return response;
           }
-        );
+        ).catch(function(error) {
+          console.error('Fetch error:', error);
+          // Trả về phản hồi lỗi nếu fetch thất bại
+          return new Response('Network error', {
+            status: 408,
+            headers: new Headers({
+              'Content-Type': 'text/plain'
+            })
+          });
+        });
       })
   );
 }); 
