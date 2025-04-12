@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1PZ95BVZHW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-1PZ95BVZHW');
+    </script>
+    <title>HistoQuiz - Bảng xếp hạng</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="HistoQuiz - Bảng xếp hạng người chơi và thành tích trong ứng dụng trắc nghiệm lịch sử Việt Nam.">
+    <meta name="keywords" content="lịch sử việt nam, trắc nghiệm lịch sử, bảng xếp hạng, thành tích, quiz lịch sử, học lịch sử">
+    <meta name="author" content="HistoQuiz Team">
+    <!-- Open Graph Meta Tags for social sharing -->
+    <meta property="og:title" content="HistoQuiz - Bảng xếp hạng">
+    <meta property="og:description" content="Xem thứ hạng và thành tích của bạn trong ứng dụng trắc nghiệm lịch sử Việt Nam.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://histoquiz.com/leaderboard">
+    <meta property="og:image" content="https://histoquiz.com/images/histoquiz-preview.jpg">
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="HistoQuiz - Bảng xếp hạng">
+    <meta name="twitter:description" content="Xem thứ hạng và thành tích của bạn trong trắc nghiệm lịch sử Việt Nam.">
+    <meta name="twitter:image" content="https://histoquiz.vn/images/histoquiz-preview.jpg">
+    <!-- Canonical URL -->
+    <meta rel="canonical" href="https://histoquiz.com/leaderboard">
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .rank-badge {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+        .tier-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .user-row {
+            transition: all 0.2s;
+        }
+        .user-row:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .current-user {
+            background-color: rgba(59, 130, 246, 0.08);
+            border-left: 4px solid #3B82F6;
+        }
+        .tab-active {
+            border-bottom: 3px solid #3B82F6;
+            color: #3B82F6;
+            font-weight: bold;
+        }
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3B82F6, #2563EB);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-['Roboto']">
+    <div class="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-3xl">
+        <div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg mb-6 text-center text-sm">
+            <strong>Phiên bản Beta:</strong> Chúng tôi đang thử nghiệm HistoQuiz. Mọi ý kiến đóng góp vui lòng gửi về <a href="mailto:info.histoquiz@gmail.com" class="underline">info.histoquiz@gmail.com</a>
+        </div>
+        <header class="bg-white shadow-md rounded-lg p-4 mb-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-blue-800">HistoQuiz</h1>
+                    <nav class="ml-8 hidden md:block">
+                        <a href="#" class="px-3 py-2 text-gray-700 hover:text-blue-600">Luyện tập</a>
+                        <a href="#" class="px-3 py-2 text-blue-600 font-medium">Bảng xếp hạng</a>
+                        <a href="achievements.html" class="px-3 py-2 text-gray-700 hover:text-blue-600">Thành tích</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="bg-blue-100 text-blue-800 rounded-full px-3 py-1 flex items-center">
+                        <i class="fas fa-trophy mr-1"></i>
+                        <span class="font-medium">1,250 điểm</span>
+                    </div>
+                    <div class="relative">
+                        <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-blue-500">
+                        <span class="absolute -top-1 -right-1 bg-green-500 rounded-full w-4 h-4 border-2 border-white"></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hồ sơ người dùng -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex flex-col md:flex-row items-center md:items-start">
+                <div class="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
+                    <div class="relative">
+                        <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="Avatar" class="w-24 h-24 rounded-full border-4 border-blue-500">
+                        <div class="absolute -bottom-2 -right-2 bg-yellow-500 text-white w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold shadow-md">
+                            15
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-grow text-center md:text-left">
+                    <div class="flex flex-col md:flex-row md:items-center mb-2">
+                        <h2 class="text-xl font-bold">NguyenVanA</h2>
+                        <div class="mx-0 md:mx-3 my-2 md:my-0">
+                            <span class="tier-badge bg-blue-100 text-blue-800">Bạc</span>
+                        </div>
+                        <div class="bg-purple-100 text-purple-800 rounded-full px-3 py-1 text-sm flex items-center self-center">
+                            <i class="fas fa-fire mr-1"></i>
+                            <span>8 ngày liên tiếp</span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm text-gray-600">Cấp độ 15</span>
+                            <span class="text-sm text-gray-600">1,250 / 2,000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 62.5%"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <div class="text-gray-500 text-sm">Hạng toàn cầu</div>
+                            <div class="font-bold text-xl">#42</div>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <div class="text-gray-500 text-sm">Hạng tuần này</div>
+                            <div class="font-bold text-xl">#28</div>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <div class="text-gray-500 text-sm">Chủ đề mạnh nhất</div>
+                            <div class="font-bold text-md">Thời kỳ Đại Việt</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col space-y-2 mt-4 md:mt-0 md:ml-4">
+                    <div class="flex space-x-2">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center">
+                            <i class="fas fa-share-alt mr-2"></i> Chia sẻ
+                        </button>
+                        <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg">
+                            <i class="fas fa-medal"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Điều hướng bảng xếp hạng -->
+        <div class="bg-white rounded-lg shadow-md mb-6">
+            <div class="flex overflow-x-auto">
+                <button class="tab-active flex-1 py-4 px-2 text-center">Toàn cầu</button>
+                <button class="flex-1 py-4 px-2 text-center text-gray-600 hover:text-gray-900">Bạn bè</button>
+                <button class="flex-1 py-4 px-2 text-center text-gray-600 hover:text-gray-900">Hàng tuần</button>
+                <button class="flex-1 py-4 px-2 text-center text-gray-600 hover:text-gray-900">Hàng tháng</button>
+                <button class="flex-1 py-4 px-2 text-center text-gray-600 hover:text-gray-900">Theo chủ đề</button>
+            </div>
+        </div>
+
+        <!-- Bảng xếp hạng -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-4 bg-blue-50 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gray-800">Bảng xếp hạng toàn cầu</h2>
+                <div class="flex items-center">
+                    <div class="relative mr-4">
+                        <input type="text" placeholder="Tìm kiếm người dùng" class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <select class="py-2 px-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">Tất cả</option>
+                        <option value="month">Tháng này</option>
+                        <option value="week">Tuần này</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="divide-y divide-gray-100">
+                <!-- Top 3 -->
+                <div class="p-4 flex items-center justify-between bg-yellow-50">
+                    <div class="flex items-center">
+                        <div class="rank-badge bg-yellow-100 text-yellow-800 mr-3">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <img src="https://www.gravatar.com/avatar/1?d=mp&f=y" alt="Top 1" class="w-12 h-12 rounded-full border-2 border-yellow-500 mr-3">
+                        <div>
+                            <div class="font-bold">TranVanB</div>
+                            <div class="flex items-center">
+                                <span class="tier-badge bg-yellow-100 text-yellow-800 mr-2">Cao Thủ</span>
+                                <span class="text-sm text-gray-500">Cấp 42</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xl font-bold">24,680 điểm</div>
+                </div>
+
+                <div class="p-4 flex items-center justify-between bg-gray-50">
+                    <div class="flex items-center">
+                        <div class="rank-badge bg-gray-200 text-gray-700 mr-3">2</div>
+                        <img src="https://www.gravatar.com/avatar/2?d=mp&f=y" alt="Top 2" class="w-10 h-10 rounded-full border-2 border-gray-400 mr-3">
+                        <div>
+                            <div class="font-bold">LeThiC</div>
+                            <div class="flex items-center">
+                                <span class="tier-badge bg-purple-100 text-purple-800 mr-2">Kim Cương</span>
+                                <span class="text-sm text-gray-500">Cấp 38</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xl font-bold">18,432 điểm</div>
+                </div>
+
+                <div class="p-4 flex items-center justify-between bg-orange-50">
+                    <div class="flex items-center">
+                        <div class="rank-badge bg-orange-100 text-orange-800 mr-3">3</div>
+                        <img src="https://www.gravatar.com/avatar/3?d=mp&f=y" alt="Top 3" class="w-10 h-10 rounded-full border-2 border-orange-400 mr-3">
+                        <div>
+                            <div class="font-bold">PhamVanD</div>
+                            <div class="flex items-center">
+                                <span class="tier-badge bg-purple-100 text-purple-800 mr-2">Kim Cương</span>
+                                <span class="text-sm text-gray-500">Cấp 35</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-xl font-bold">15,784 điểm</div>
+                </div>
+
+                <!-- Các người dùng khác -->
+                <div class="p-4 flex items-center justify-between user-row">
+                    <div class="flex items-center">
+                        <div class="rank-badge bg-gray-100 text-gray-800 mr-3">4</div>
+                        <img src="https://www.gravatar.com/avatar/4?d=mp&f=y" alt="User 4" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <div class="font-medium">HoangVanE</div>
+                            <div class="flex items-center">
+                                <span class="tier-badge bg-indigo-100 text-indigo-800 mr-2">Bạch Kim</span>
+                                <span class="text-sm text-gray-500">Cấp 32</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="font-bold">12,345 điểm</div>
+                </div>
+
+                <div class="p-4 flex items-center justify-between user-row">
+                    <div class="flex items-center">
+                        <div class="rank-badge bg-gray-100 text-gray-800 mr-3">5</div>
+                        <img src="https://www.gravatar.com/avatar/5?d=mp&f=y" alt="User 5" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <div class="font-medium">NguyenThiF</div>
+                            <div class="flex items-center">
+                                <span class="tier-badge bg-indigo-100 text-indigo-800 mr-2">Bạch Kim</span>
+                                <span class="text-sm text-gray-500">Cấp 29</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="font-bold">9,876 điểm</div>
+                </div>
+
+                <!-- Người dùng hiện tại -->
+                <div class="p-4 flex items-center justify-between user-row current-user">
+                    <div class="flex items-center">
+                        <div class="rank-badge bg-blue-100 text-blue-800 mr-3">42</div>
+                        <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="Bạn" class="w-10 h-10 rounded-full border-2 border-blue-500 mr-3">
+                        <div>
+                            <div class="font-medium">NguyenVanA <span class="text-blue-600">(Bạn)</span></div>
+                            <div class="flex items-center">
+                                <span class="tier-badge bg-blue-100 text-blue-800 mr-2">Bạc</span>
+                                <span class="text-sm text-gray-500">Cấp 15</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="font-bold">1,250 điểm</div>
+                </div>
+
+                <!-- Người dùng khác -->
+                <div class="p-4 flex items-center justify-between user-row">
+                    <div class="flex items-center">
+                        <div class="rank-badge bg-gray-100 text-gray-800 mr-3">43</div>
+                        <img src="https://www.gravatar.com/avatar/43?d=mp&f=y" alt="User 43" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <div class="font-medium">TranThiH</div>
+                            <div class="flex items-center">
+                                <span class="tier-badge bg-blue-100 text-blue-800 mr-2">Bạc</span>
+                                <span class="text-sm text-gray-500">Cấp 14</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="font-bold">1,234 điểm</div>
+                </div>
+
+                <div class="p-4 flex items-center justify-between user-row">
+                    <div class="flex items-center">
+                        <div class="rank-badge bg-gray-100 text-gray-800 mr-3">44</div>
+                        <img src="https://www.gravatar.com/avatar/44?d=mp&f=y" alt="User 44" class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <div class="font-medium">LeVanI</div>
+                            <div class="flex items-center">
+                                <span class="tier-badge bg-blue-100 text-blue-800 mr-2">Bạc</span>
+                                <span class="text-sm text-gray-500">Cấp 14</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="font-bold">1,210 điểm</div>
+                </div>
+            </div>
+
+            <!-- Phân trang -->
+            <div class="p-4 bg-gray-50 border-t border-gray-200 flex justify-between items-center">
+                <div>
+                    <span class="text-sm text-gray-600">Hiển thị 1-10 trong tổng số 120 người dùng</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-600 hover:bg-gray-100">Trước</button>
+                    <button class="px-3 py-1 border border-blue-500 rounded-md bg-blue-500 text-white">1</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-600 hover:bg-gray-100">2</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-600 hover:bg-gray-100">3</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-600 hover:bg-gray-100">...</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-600 hover:bg-gray-100">12</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md bg-white text-gray-600 hover:bg-gray-100">Tiếp</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Huy hiệu thành tích -->
+    <div class="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+        <div class="flex items-center space-x-2">
+            <div class="bg-green-100 rounded-full p-2">
+                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="font-medium">Thành tích mới!</div>
+                <div class="text-sm text-gray-600">Đạt top 50 trong bảng xếp hạng tuần</div>
+            </div>
+            <button class="text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Giả lập dữ liệu và hành vi
+        document.addEventListener('DOMContentLoaded', function() {
+            // Xử lý chuyển tab
+            const tabs = document.querySelectorAll('[class^="tab"]');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('tab-active'));
+                    this.classList.add('tab-active');
+                });
+            });
+
+            // Xử lý đóng thông báo thành tích
+            const achievementClose = document.querySelector('.fixed.bottom-4 button');
+            if (achievementClose) {
+                achievementClose.addEventListener('click', function() {
+                    document.querySelector('.fixed.bottom-4').style.display = 'none';
+                });
+            }
+
+            // Giả lập hiệu ứng hover trên hàng người dùng
+            const userRows = document.querySelectorAll('.user-row');
+            userRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.classList.add('shadow');
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.classList.remove('shadow');
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

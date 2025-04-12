@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1PZ95BVZHW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-1PZ95BVZHW');
+    </script>
+    <title>HistoQuiz - Thành tích</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="HistoQuiz - Xem thành tích và huy hiệu bạn đã đạt được trong ứng dụng trắc nghiệm lịch sử Việt Nam.">
+    <meta name="keywords" content="lịch sử việt nam, trắc nghiệm lịch sử, thành tích, huy hiệu, quiz lịch sử, học lịch sử">
+    <meta name="author" content="HistoQuiz Team">
+    <!-- Open Graph Meta Tags for social sharing -->
+    <meta property="og:title" content="HistoQuiz - Thành tích">
+    <meta property="og:description" content="Khám phá các thành tích và huy hiệu bạn đã đạt được trong ứng dụng trắc nghiệm lịch sử Việt Nam.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://histoquiz.com/achievements">
+    <meta property="og:image" content="https://histoquiz.com/images/histoquiz-preview.jpg">
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="HistoQuiz - Thành tích">
+    <meta name="twitter:description" content="Khám phá các thành tích và huy hiệu bạn đã đạt được trong trắc nghiệm lịch sử Việt Nam.">
+    <meta name="twitter:image" content="https://histoquiz.vn/images/histoquiz-preview.jpg">
+    <!-- Canonical URL -->
+    <meta rel="canonical" href="https://histoquiz.com/achievements">
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .badge-card {
+            transition: all 0.3s;
+        }
+        .badge-card:hover {
+            transform: translateY(-5px);
+        }
+        .badge-locked {
+            filter: grayscale(1);
+            opacity: 0.7;
+        }
+        .badge-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            border-radius: 50%;
+        }
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3B82F6, #2563EB);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-['Roboto']">
+    <div class="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-3xl">
+        <div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg mb-6 text-center text-sm">
+            <strong>Phiên bản Beta:</strong> Chúng tôi đang thử nghiệm HistoQuiz. Mọi ý kiến đóng góp vui lòng gửi về <a href="mailto:info.histoquiz@gmail.com" class="underline">info.histoquiz@gmail.com</a>
+        </div>
+        <header class="bg-white shadow-md rounded-lg p-4 mb-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-blue-800">HistoQuiz</h1>
+                    <nav class="ml-8 hidden md:block">
+                        <a href="#" class="px-3 py-2 text-gray-700 hover:text-blue-600">Luyện tập</a>
+                        <a href="leaderboard-ui.html" class="px-3 py-2 text-gray-700 hover:text-blue-600">Bảng xếp hạng</a>
+                        <a href="#" class="px-3 py-2 text-blue-600 font-medium">Thành tích</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="bg-blue-100 text-blue-800 rounded-full px-3 py-1 flex items-center">
+                        <i class="fas fa-trophy mr-1"></i>
+                        <span class="font-medium">1,250 điểm</span>
+                    </div>
+                    <div class="relative">
+                        <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="Avatar" class="w-10 h-10 rounded-full border-2 border-blue-500">
+                        <span class="absolute -top-1 -right-1 bg-green-500 rounded-full w-4 h-4 border-2 border-white"></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tiêu đề trang -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-800">Thành tích của bạn</h2>
+            <div class="flex items-center bg-blue-50 text-blue-800 rounded-lg px-4 py-2">
+                <i class="fas fa-medal mr-2"></i>
+                <span>12/30 Huy hiệu đã mở khóa</span>
+            </div>
+        </div>
+
+        <!-- Thông tin tóm tắt -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-blue-50 rounded-lg p-4 flex items-center">
+                    <div class="bg-blue-100 rounded-full p-3 mr-4">
+                        <i class="fas fa-certificate text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600">Tổng huy hiệu</div>
+                        <div class="text-xl font-bold">12</div>
+                    </div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4 flex items-center">
+                    <div class="bg-green-100 rounded-full p-3 mr-4">
+                        <i class="fas fa-trophy text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600">Thứ hạng cao nhất</div>
+                        <div class="text-xl font-bold">#28</div>
+                    </div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 flex items-center">
+                    <div class="bg-purple-100 rounded-full p-3 mr-4">
+                        <i class="fas fa-fire text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600">Chuỗi liên tiếp</div>
+                        <div class="text-xl font-bold">8 ngày</div>
+                    </div>
+                </div>
+                <div class="bg-yellow-50 rounded-lg p-4 flex items-center">
+                    <div class="bg-yellow-100 rounded-full p-3 mr-4">
+                        <i class="fas fa-graduation-cap text-yellow-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-600">Số quiz hoàn thành</div>
+                        <div class="text-xl font-bold">87</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danh mục thành tích -->
+        <div class="mb-6">
+            <div class="bg-white rounded-t-lg shadow-md p-4 flex space-x-4 overflow-x-auto">
+                <button class="px-4 py-2 bg-blue-500 text-white rounded-lg flex items-center whitespace-nowrap">
+                    <i class="fas fa-th mr-2"></i> Tất cả
+                </button>
+                <button class="px-4 py-2 hover:bg-gray-100 text-gray-700 rounded-lg flex items-center whitespace-nowrap">
+                    <i class="fas fa-medal mr-2"></i> Xếp hạng
+                </button>
+                <button class="px-4 py-2 hover:bg-gray-100 text-gray-700 rounded-lg flex items-center whitespace-nowrap">
+                    <i class="fas fa-fire mr-2"></i> Liên tiếp
+                </button>
+                <button class="px-4 py-2 hover:bg-gray-100 text-gray-700 rounded-lg flex items-center whitespace-nowrap">
+                    <i class="fas fa-graduation-cap mr-2"></i> Học tập
+                </button>
+                <button class="px-4 py-2 hover:bg-gray-100 text-gray-700 rounded-lg flex items-center whitespace-nowrap">
+                    <i class="fas fa-book-open mr-2"></i> Chủ đề
+                </button>
+                <button class="px-4 py-2 hover:bg-gray-100 text-gray-700 rounded-lg flex items-center whitespace-nowrap">
+                    <i class="fas fa-lock mr-2"></i> Chưa mở khóa
+                </button>
+            </div>
+        </div>
+
+        <!-- Danh sách huy hiệu -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <!-- Huy hiệu đã mở khóa -->
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card hover:shadow-lg">
+                <div class="badge-icon bg-yellow-100 text-yellow-600 mb-4">
+                    <i class="fas fa-crown text-4xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">Top 50 Toàn cầu</h3>
+                <p class="text-gray-600 text-center text-sm mb-4">Lọt vào top 50 bảng xếp hạng toàn cầu</p>
+                <div class="text-xs text-center text-gray-500">Đạt được vào 15/06/2023</div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card hover:shadow-lg">
+                <div class="badge-icon bg-blue-100 text-blue-600 mb-4">
+                    <i class="fas fa-calendar-week text-4xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">Top 30 Tuần</h3>
+                <p class="text-gray-600 text-center text-sm mb-4">Lọt vào top 30 bảng xếp hạng tuần</p>
+                <div class="text-xs text-center text-gray-500">Đạt được vào 20/06/2023</div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card hover:shadow-lg">
+                <div class="badge-icon bg-purple-100 text-purple-600 mb-4">
+                    <i class="fas fa-fire text-4xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">Siêu liên tiếp</h3>
+                <p class="text-gray-600 text-center text-sm mb-4">Hoàn thành bài quiz 7 ngày liên tiếp</p>
+                <div class="text-xs text-center text-gray-500">Đạt được vào 18/06/2023</div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card hover:shadow-lg">
+                <div class="badge-icon bg-green-100 text-green-600 mb-4">
+                    <i class="fas fa-graduation-cap text-4xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">Học giả</h3>
+                <p class="text-gray-600 text-center text-sm mb-4">Hoàn thành 50 bài quiz với điểm số trên 80%</p>
+                <div class="text-xs text-center text-gray-500">Đạt được vào 10/06/2023</div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card hover:shadow-lg">
+                <div class="badge-icon bg-indigo-100 text-indigo-600 mb-4">
+                    <i class="fas fa-book text-4xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">Chuyên gia Đại Việt</h3>
+                <p class="text-gray-600 text-center text-sm mb-4">Trả lời đúng 100 câu hỏi về thời kỳ Đại Việt</p>
+                <div class="text-xs text-center text-gray-500">Đạt được vào 05/06/2023</div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card hover:shadow-lg">
+                <div class="badge-icon bg-red-100 text-red-600 mb-4">
+                    <i class="fas fa-bolt text-4xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">Siêu tốc</h3>
+                <p class="text-gray-600 text-center text-sm mb-4">Hoàn thành bài quiz nhanh gấp 2 lần thời gian trung bình</p>
+                <div class="text-xs text-center text-gray-500">Đạt được vào 22/06/2023</div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card hover:shadow-lg">
+                <div class="badge-icon bg-pink-100 text-pink-600 mb-4">
+                    <i class="fas fa-star text-4xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">Tân binh xuất sắc</h3>
+                <p class="text-gray-600 text-center text-sm mb-4">Đạt 1000 điểm trong tuần đầu tiên</p>
+                <div class="text-xs text-center text-gray-500">Đạt được vào 03/06/2023</div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card hover:shadow-lg">
+                <div class="badge-icon bg-blue-100 text-blue-600 mb-4">
+                    <i class="fas fa-medal text-4xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">Hạng Bạc</h3>
+                <p class="text-gray-600 text-center text-sm mb-4">Đạt đến hạng Bạc trên bảng xếp hạng</p>
+                <div class="text-xs text-center text-gray-500">Đạt được vào 08/06/2023</div>
+            </div>
+
+            <!-- Huy hiệu chưa mở khóa -->
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card badge-locked">
+                <div class="badge-icon bg-gray-100 text-gray-600 mb-4 relative">
+                    <i class="fas fa-trophy text-4xl"></i>
+                    <div class="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-70 rounded-full">
+                        <i class="fas fa-lock text-gray-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2 text-gray-600">Top 10 Toàn cầu</h3>
+                <p class="text-gray-500 text-center text-sm mb-4">Lọt vào top 10 bảng xếp hạng toàn cầu</p>
+                <div class="mt-2">
+                    <div class="text-xs text-center text-gray-500 mb-1">Tiến độ: 42/100</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 42%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card badge-locked">
+                <div class="badge-icon bg-gray-100 text-gray-600 mb-4 relative">
+                    <i class="fas fa-fire-alt text-4xl"></i>
+                    <div class="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-70 rounded-full">
+                        <i class="fas fa-lock text-gray-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2 text-gray-600">Siêu liên tiếp 30</h3>
+                <p class="text-gray-500 text-center text-sm mb-4">Hoàn thành bài quiz 30 ngày liên tiếp</p>
+                <div class="mt-2">
+                    <div class="text-xs text-center text-gray-500 mb-1">Tiến độ: 8/30</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 26.7%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card badge-locked">
+                <div class="badge-icon bg-gray-100 text-gray-600 mb-4 relative">
+                    <i class="fas fa-scroll text-4xl"></i>
+                    <div class="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-70 rounded-full">
+                        <i class="fas fa-lock text-gray-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2 text-gray-600">Bách khoa toàn thư</h3>
+                <p class="text-gray-500 text-center text-sm mb-4">Hoàn thành tất cả chủ đề ở mức độ khó</p>
+                <div class="mt-2">
+                    <div class="text-xs text-center text-gray-500 mb-1">Tiến độ: 1/4</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 25%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 badge-card badge-locked">
+                <div class="badge-icon bg-gray-100 text-gray-600 mb-4 relative">
+                    <i class="fas fa-gem text-4xl"></i>
+                    <div class="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-70 rounded-full">
+                        <i class="fas fa-lock text-gray-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2 text-gray-600">Hạng Kim Cương</h3>
+                <p class="text-gray-500 text-center text-sm mb-4">Đạt đến hạng Kim Cương trên bảng xếp hạng</p>
+                <div class="mt-2">
+                    <div class="text-xs text-center text-gray-500 mb-1">Tiến độ: 1,250/10,000</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 12.5%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nút xem thêm -->
+        <div class="mt-6 text-center">
+            <button class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg inline-flex items-center">
+                <span class="mr-2">Xem thêm huy hiệu</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Thông báo thành tích mới -->
+    <div class="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border border-green-200 animate-pulse">
+        <div class="flex items-center space-x-3">
+            <div class="badge-icon bg-green-100 text-green-600" style="width: 50px; height: 50px;">
+                <i class="fas fa-chart-line text-xl"></i>
+            </div>
+            <div>
+                <div class="font-medium">Bạn sắp đạt được!</div>
+                <div class="text-sm text-gray-600">Chuỗi 10 ngày liên tiếp (8/10)</div>
+            </div>
+            <button class="text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Giả lập dữ liệu và hành vi
+        document.addEventListener('DOMContentLoaded', function() {
+            // Xử lý đóng thông báo thành tích
+            const achievementClose = document.querySelector('.fixed.bottom-4 button');
+            if (achievementClose) {
+                achievementClose.addEventListener('click', function() {
+                    document.querySelector('.fixed.bottom-4').style.display = 'none';
+                });
+            }
+
+            // Xử lý tabs
+            const tabButtons = document.querySelectorAll('.bg-white.rounded-t-lg button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('bg-blue-500', 'text-white');
+                        btn.classList.add('hover:bg-gray-100', 'text-gray-700');
+                    });
+                    this.classList.remove('hover:bg-gray-100', 'text-gray-700');
+                    this.classList.add('bg-blue-500', 'text-white');
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

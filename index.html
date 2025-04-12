@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1PZ95BVZHW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-1PZ95BVZHW');
+    </script>
+    <title>HistoQuiz - Trắc nghiệm Lịch sử Việt Nam</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="HistoQuiz - Ứng dụng trắc nghiệm lịch sử Việt Nam giúp bạn học tập, ôn luyện kiến thức một cách thú vị và hiệu quả. Khám phá lịch sử qua các câu hỏi trắc nghiệm.">
+    <meta name="keywords" content="lịch sử việt nam, trắc nghiệm lịch sử, ôn luyện lịch sử, quiz lịch sử, học lịch sử, lịch sử Đại Việt, Cách mạng Việt Nam, Việt Nam hiện đại">
+    <meta name="author" content="HistoQuiz Team">
+    <!-- Open Graph Meta Tags for social sharing -->
+    <meta property="og:title" content="HistoQuiz - Trắc nghiệm Lịch sử Việt Nam">
+    <meta property="og:description" content="Khám phá lịch sử Việt Nam qua các câu hỏi trắc nghiệm thú vị và bổ ích. Học lịch sử chưa bao giờ dễ dàng và hiệu quả đến thế!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://histoquiz.com">
+    <meta property="og:image" content="https://histoquiz.com/images/histoquiz-preview.jpg">
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="HistoQuiz - Trắc nghiệm Lịch sử Việt Nam">
+    <meta name="twitter:description" content="Khám phá lịch sử Việt Nam qua các câu hỏi trắc nghiệm thú vị và bổ ích.">
+    <meta name="twitter:image" content="https://histoquiz.vn/images/histoquiz-preview.jpg">
+    <!-- Canonical URL -->
+    <meta rel="canonical" href="https://histoquiz.com">
+    <!-- Robots Meta Tag -->
+    <meta name="robots" content="index, follow">
+    <!-- Google / Search Engine Tags -->
+    <meta itemprop="name" content="HistoQuiz - Trắc nghiệm Lịch sử Việt Nam">
+    <meta itemprop="description" content="Ứng dụng trắc nghiệm lịch sử Việt Nam giúp bạn học tập, ôn luyện kiến thức một cách thú vị và hiệu quả.">
+    <meta itemprop="image" content="https://histoquiz.com/images/histoquiz-preview.jpg">
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Đăng ký Service Worker nếu trình duyệt hỗ trợ
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker đăng ký thành công với phạm vi: ', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Đăng ký Service Worker thất bại: ', error);
+                    });
+            });
+        }
+    </script>
+    <style>
+        @media (max-width: 640px) {
+            .answer-option {
+                padding: 0.75rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            #timer {
+                font-size: 1rem !important;
+            }
+            
+            body {
+                padding-bottom: 2rem;
+            }
+            
+            .topic-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-['Roboto']">
+    <div class="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-3xl">
+        <div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg mb-6 text-center text-sm">
+            <strong>Phiên bản Beta:</strong> Chúng tôi đang thử nghiệm HistoQuiz. Mọi ý kiến đóng góp vui lòng gửi về <a href="mailto:info.histoquiz@gmail.com" class="underline">info.histoquiz@gmail.com</a>
+        </div>
+        <header class="text-center mb-6 sm:mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold text-blue-800 mb-2 sm:mb-4">HistoQuiz</h1>
+            <p class="text-lg sm:text-xl text-gray-600">Khám phá Lịch sử Việt Nam qua các câu hỏi trắc nghiệm</p>
+        </header>
+
+        <!-- Phần chọn chủ đề -->
+        <div id="topic-selection" class="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
+            <h2 class="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-center">Chọn chủ đề</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div class="topic-card bg-gradient-to-br from-amber-50 to-amber-100 p-4 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-amber-300">
+                    <div class="mb-2 sm:mb-3 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-base sm:text-lg text-center text-amber-800 mb-1 sm:mb-2">Thời kỳ Bắc thuộc</h3>
+                    <p class="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">Khám phá lịch sử và các cuộc khởi nghĩa giành độc lập từ năm 111 TCN đến 939</p>
+                    <div class="flex justify-between items-center">
+                        <span class="question-count bg-amber-200 text-amber-800 text-xs px-2 py-1 rounded-full">Đang tải...</span>
+                        <span class="text-amber-600 text-sm sm:text-base">Bắt đầu →</span>
+                    </div>
+                </div>
+                
+                <div class="topic-card bg-gradient-to-br from-blue-50 to-blue-100 p-4 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-blue-300">
+                    <div class="mb-2 sm:mb-3 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-base sm:text-lg text-center text-blue-800 mb-1 sm:mb-2">Thời kỳ Đại Việt</h3>
+                    <p class="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">Tìm hiểu về thời kỳ phong kiến và các triều đại Việt Nam từ thế kỷ X đến XIX</p>
+                    <div class="flex justify-between items-center">
+                        <span class="question-count bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full">Đang tải...</span>
+                        <span class="text-blue-600 text-sm sm:text-base">Bắt đầu →</span>
+                    </div>
+                </div>
+                
+                <div class="topic-card bg-gradient-to-br from-red-50 to-red-100 p-4 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-red-300">
+                    <div class="mb-2 sm:mb-3 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-base sm:text-lg text-center text-red-800 mb-1 sm:mb-2">Cách mạng Việt Nam</h3>
+                    <p class="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">Khám phá con đường đấu tranh giành độc lập và thống nhất đất nước</p>
+                    <div class="flex justify-between items-center">
+                        <span class="question-count bg-red-200 text-red-800 text-xs px-2 py-1 rounded-full">Đang tải...</span>
+                        <span class="text-red-600 text-sm sm:text-base">Bắt đầu →</span>
+                    </div>
+                </div>
+                
+                <div class="topic-card bg-gradient-to-br from-green-50 to-green-100 p-4 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-green-300">
+                    <div class="mb-2 sm:mb-3 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-base sm:text-lg text-center text-green-800 mb-1 sm:mb-2">Việt Nam hiện đại</h3>
+                    <p class="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">Tìm hiểu về quá trình xây dựng và phát triển đất nước từ 1975 đến nay</p>
+                    <div class="flex justify-between items-center">
+                        <span class="question-count bg-green-200 text-green-800 text-xs px-2 py-1 rounded-full">Đang tải...</span>
+                        <span class="text-green-600 text-sm sm:text-base">Bắt đầu →</span>
+                    </div>
+                </div>
+                
+                <div class="topic-card bg-gradient-to-br from-purple-50 to-purple-100 p-4 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-purple-300">
+                    <div class="mb-2 sm:mb-3 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 sm:h-12 sm:w-12 mx-auto text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-base sm:text-lg text-center text-purple-800 mb-1 sm:mb-2">Tạo ngẫu nhiên</h3>
+                    <p class="text-xs sm:text-sm text-gray-600 text-center mb-2 sm:mb-3">Trải nghiệm bài kiểm tra đa dạng với câu hỏi từ tất cả các chủ đề</p>
+                    <div class="flex justify-between items-center">
+                        <span class="question-count bg-purple-200 text-purple-800 text-xs px-2 py-1 rounded-full">Đang tải...</span>
+                        <span class="text-purple-600 text-sm sm:text-base">Bắt đầu →</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phần cấu hình bài kiểm tra -->
+        <div id="quiz-config" class="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 hidden">
+            <div class="flex items-center mb-3 sm:mb-4 justify-center relative">
+                <button id="config-back-button" class="absolute left-0 flex items-center justify-center text-gray-600 hover:text-blue-600 transition-all duration-300 bg-gray-100 hover:bg-blue-50 p-2 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span class="hidden sm:inline ml-1 font-medium">Quay lại</span>
+                </button>
+                <h2 class="text-xl sm:text-2xl font-semibold text-center">Cấu hình bài kiểm tra</h2>
+            </div>
+            <div class="space-y-4 sm:space-y-5">
+                <div class="bg-blue-50 rounded-lg p-3 sm:p-4">
+                    <label class="block text-gray-700 mb-2 font-medium text-base">Số câu hỏi:</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="question-count" value="5" class="sr-only question-count-radio" checked>
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-blue-200 bg-white cursor-pointer hover:bg-blue-100 transition text-base font-medium text-blue-800">5</span>
+                        </label>
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="question-count" value="10" class="sr-only question-count-radio">
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-blue-200 bg-white cursor-pointer hover:bg-blue-100 transition text-base font-medium text-blue-800">10</span>
+                        </label>
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="question-count" value="15" class="sr-only question-count-radio">
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-blue-200 bg-white cursor-pointer hover:bg-blue-100 transition text-base font-medium text-blue-800">15</span>
+                        </label>
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="question-count" value="20" class="sr-only question-count-radio">
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-blue-200 bg-white cursor-pointer hover:bg-blue-100 transition text-base font-medium text-blue-800">20</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="bg-green-50 rounded-lg p-3 sm:p-4">
+                    <label class="block text-gray-700 mb-2 font-medium text-base">Thời gian (phút):</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="time-limit" value="5" class="sr-only time-limit-radio" checked>
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-green-200 bg-white cursor-pointer hover:bg-green-100 transition text-base font-medium text-green-800">5</span>
+                        </label>
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="time-limit" value="10" class="sr-only time-limit-radio">
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-green-200 bg-white cursor-pointer hover:bg-green-100 transition text-base font-medium text-green-800">10</span>
+                        </label>
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="time-limit" value="15" class="sr-only time-limit-radio">
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-green-200 bg-white cursor-pointer hover:bg-green-100 transition text-base font-medium text-green-800">15</span>
+                        </label>
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="time-limit" value="20" class="sr-only time-limit-radio">
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-green-200 bg-white cursor-pointer hover:bg-green-100 transition text-base font-medium text-green-800">20</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-3 sm:p-4">
+                    <label class="block text-gray-700 mb-2 font-medium text-base">Mức độ:</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="difficulty" value="easy" class="sr-only difficulty-radio" checked>
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-purple-200 bg-white cursor-pointer hover:bg-purple-100 transition text-base font-medium text-purple-800">Dễ</span>
+                        </label>
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="difficulty" value="medium" class="sr-only difficulty-radio">
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-purple-200 bg-white cursor-pointer hover:bg-purple-100 transition text-base font-medium text-purple-800">Trung bình</span>
+                        </label>
+                        <label class="flex flex-col items-center">
+                            <input type="radio" name="difficulty" value="hard" class="sr-only difficulty-radio">
+                            <span class="option-box w-full py-3 text-center rounded-lg border border-purple-200 bg-white cursor-pointer hover:bg-purple-100 transition text-base font-medium text-purple-800">Khó</span>
+                        </label>
+                    </div>
+                </div>
+                <button id="start-quiz" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 px-4 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 text-lg font-medium mt-5 shadow-md flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Bắt đầu
+                </button>
+            </div>
+        </div>
+
+        <!-- Phần làm bài kiểm tra -->
+        <div id="quiz-section" class="bg-white rounded-lg shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 hidden">
+            <div class="flex justify-between items-center mb-5 sm:mb-6">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button id="back-button" class="flex items-center justify-center text-gray-600 hover:text-blue-600 transition-all duration-300 bg-gray-100 hover:bg-blue-50 p-2 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span class="hidden sm:inline ml-1 font-medium">Quay lại</span>
+                    </button>
+                    <h2 class="text-lg sm:text-2xl font-semibold">Câu hỏi <span id="current-question" class="text-blue-600">1</span>/<span id="total-questions">10</span></h2>
+                </div>
+                <div class="bg-blue-50 text-blue-800 px-3 py-1.5 rounded-full text-base sm:text-xl font-semibold shadow-sm" id="timer">00:00</div>
+            </div>
+            <div id="question-content" class="mb-6 sm:mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100 shadow-sm">
+                <p class="text-base sm:text-lg mb-4 sm:mb-5 font-medium text-gray-800">Nội dung câu hỏi sẽ xuất hiện ở đây</p>
+                <div class="space-y-3 sm:space-y-4" id="answers">
+                    <!-- Các câu trả lời sẽ được thêm vào đây bằng JavaScript -->
+                </div>
+            </div>
+            <div class="flex justify-between gap-2 mt-6">
+                <button id="prev-question" class="hidden bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2.5 px-5 rounded-lg hover:from-gray-600 hover:to-gray-700 transition duration-300 text-base sm:text-lg flex-1 sm:flex-initial shadow-md flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>  
+                    Câu trước
+                </button>
+                <button id="next-question" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2.5 px-5 rounded-lg hover:from-blue-600 hover:to-blue-700 transition duration-300 text-base sm:text-lg flex-1 sm:flex-initial shadow-md flex items-center justify-center">
+                    Câu tiếp theo
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Phần kết quả -->
+        <div id="results-section" class="bg-white rounded-lg shadow-lg p-4 sm:p-6 hidden">
+            <h2 class="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Kết quả</h2>
+            
+            <!-- Phần tổng kết -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+                <!-- Điểm số và phần trăm -->
+                <div class="bg-gray-50 p-3 sm:p-5 rounded-lg shadow-sm text-center">
+                    <div id="result-badge" class="text-base sm:text-lg font-semibold mb-2 py-1 px-3 rounded-full inline-block bg-blue-100 text-blue-800">Đạt</div>
+                    <p class="text-3xl sm:text-4xl font-bold text-blue-600 mb-2 sm:mb-3">
+                        <span id="score">0</span>/<span id="max-score">10</span>
+                    </p>
+                    <div class="w-full bg-gray-200 rounded-full h-3 sm:h-4 mb-1 sm:mb-2">
+                        <div id="progress-bar" class="bg-blue-600 h-3 sm:h-4 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <p class="text-xl sm:text-2xl font-bold"><span id="score-percentage">0</span>%</p>
+                </div>
+                
+                <!-- Biểu đồ kết quả -->
+                <div class="bg-gray-50 p-3 sm:p-5 rounded-lg shadow-sm">
+                    <h3 class="text-base sm:text-lg font-semibold mb-2 sm:mb-3 text-center">Thống kê kết quả</h3>
+                    <div class="h-32 sm:h-40">
+                        <canvas id="results-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Thông tin bổ sung -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <div class="bg-blue-50 p-3 sm:p-4 rounded-lg text-center">
+                    <p class="text-xs sm:text-sm text-gray-600">Thời gian hoàn thành</p>
+                    <p class="text-base sm:text-xl font-semibold">
+                        <span id="completion-time-minutes">0</span> phút 
+                        <span id="completion-time-seconds">0</span> giây
+                    </p>
+                </div>
+                <div class="bg-green-50 p-3 sm:p-4 rounded-lg text-center">
+                    <p class="text-xs sm:text-sm text-gray-600">Đáp án đúng</p>
+                    <p class="text-base sm:text-xl font-semibold text-green-600"><span id="correct-answers">0</span></p>
+                </div>
+                <div class="bg-red-50 p-3 sm:p-4 rounded-lg text-center">
+                    <p class="text-xs sm:text-sm text-gray-600">Đáp án sai</p>
+                    <p class="text-base sm:text-xl font-semibold text-red-600"><span id="wrong-answers">0</span></p>
+                </div>
+            </div>
+            
+            <div class="mb-4 sm:mb-6">
+                <h3 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">Chi tiết đáp án</h3>
+                <div id="detailed-results" class="space-y-3 sm:space-y-4">
+                    <!-- Chi tiết kết quả sẽ được thêm vào đây bằng JavaScript -->
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <button id="retry-quiz" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 text-base font-medium shadow-md flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Làm lại bài kiểm tra
+                </button>
+                <button id="back-to-topics" class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 text-base font-medium mt-2 sm:mt-0 shadow-md flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Chọn chủ đề khác
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Phần đăng ký nhận thông báo -->
+    <div class="container mx-auto px-3 sm:px-4 py-4 max-w-3xl">
+        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg overflow-hidden">
+            <div class="md:flex">
+                <div class="p-6 md:p-8 md:w-1/2">
+                    <h2 class="text-xl sm:text-2xl font-bold text-white mb-2">Nhận thông báo câu hỏi mới</h2>
+                    <p class="text-blue-100 mb-4 text-sm sm:text-base">Đăng ký để nhận thông báo khi có câu hỏi mới và cập nhật từ HistoQuiz.</p>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="email" placeholder="Email của bạn" class="flex-grow p-2 sm:p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
+                        <button class="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 sm:py-3 rounded-lg font-medium text-sm sm:text-base transition-colors duration-300 shadow-sm">
+                            Đăng ký
+                        </button>
+                    </div>
+                </div>
+                <div class="md:w-1/2 relative hidden md:block">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32 text-white opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <div class="p-6 md:p-8 flex items-center justify-center h-full relative z-10">
+                        <div class="text-center">
+                            <div class="bg-white/20 p-4 rounded-full inline-block mb-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <p class="text-white text-lg font-semibold">Nhận ngay</p>
+                            <p class="text-blue-100 text-sm">5 câu hỏi lịch sử thú vị</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="container mx-auto px-3 sm:px-4 pb-8 pt-4 max-w-3xl">
+        <div class="border-t border-gray-200 pt-6 pb-2">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-800 mb-3">Giới thiệu</h3>
+                    <p class="text-sm text-gray-600 mb-3">HistoQuiz - Ứng dụng trắc nghiệm lịch sử Việt Nam giúp bạn học tập, ôn luyện kiến thức một cách thú vị và hiệu quả.</p>
+                    <p class="text-xs text-gray-500">© 2023 HistoQuiz. Bản quyền thuộc về nhóm phát triển.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-800 mb-3">Tài liệu tham khảo</h3>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li class="hover:text-blue-600 transition-colors duration-200">
+                            <a href="#" class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                                Sách giáo khoa Lịch sử Việt Nam
+                            </a>
+                        </li>
+                        <li class="hover:text-blue-600 transition-colors duration-200">
+                            <a href="#" class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                                Từ điển Bách khoa Việt Nam
+                            </a>
+                        </li>
+                        <li class="hover:text-blue-600 transition-colors duration-200">
+                            <a href="#" class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                                Bảo tàng Lịch sử Việt Nam
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-blue-800 mb-3">Liên hệ</h3>
+                    <div class="flex space-x-3 mb-4">
+                        <a href="#" class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-full transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+                        </a>
+                        <a href="#" class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-full transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.189-1.256-.023-2.317-.854-2.684-1.995.451.086.895.061 1.298-.049-1.381-.278-2.335-1.522-2.304-2.853.388.215.83.344 1.301.359-1.279-.855-1.641-2.544-.889-3.835 1.416 1.738 3.533 2.881 5.92 3.001-.419-1.796.944-3.527 2.799-3.527.825 0 1.572.349 2.096.907.654-.128 1.27-.368 1.824-.697-.215.671-.67 1.233-1.263 1.589.581-.07 1.135-.224 1.649-.453-.384.578-.87 1.084-1.433 1.489z"/></svg>
+                        </a>
+                        <a href="#" class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-full transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                        </a>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <p class="flex items-center mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            info.histoquiz@gmail.com
+                        </p>
+                        <p class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Hà Nội, Việt Nam
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-center items-center mt-4">
+            <div class="flex space-x-1 px-3 py-1 rounded-full bg-blue-50">
+                <a href="#" class="text-xs text-gray-500 hover:text-blue-600 transition-colors duration-200">Điều khoản sử dụng</a>
+                <span class="text-gray-400">|</span>
+                <a href="#" class="text-xs text-gray-500 hover:text-blue-600 transition-colors duration-200">Chính sách bảo mật</a>
+                <span class="text-gray-400">|</span>
+                <a href="#" class="text-xs text-gray-500 hover:text-blue-600 transition-colors duration-200">Trợ giúp</a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Nút cuộn lên đầu trang -->
+    <button id="back-to-top" class="fixed bottom-4 right-4 z-50 rounded-full bg-blue-600 text-white shadow-lg p-2 opacity-0 hover:bg-blue-700 transition-all duration-300" style="transform: translateY(20px)">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+    
+    <!-- Component thông báo tùy chỉnh -->
+    <div id="toast-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300 opacity-0"></div>
+    <div id="custom-toast" class="fixed top-0 left-0 right-0 flex items-center justify-center p-4 z-50 pointer-events-none hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full overflow-hidden transform transition-all duration-300 scale-95 opacity-0 pointer-events-auto">
+            <div id="toast-header" class="flex items-center justify-between px-4 py-3 border-b">
+                <h3 id="toast-title" class="text-lg font-semibold text-gray-800">Thông báo</h3>
+                <button id="toast-close" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="toast-body" class="px-4 py-4 text-gray-700">
+                Nội dung thông báo sẽ xuất hiện ở đây.
+            </div>
+            <div id="toast-footer" class="px-4 py-3 bg-gray-50 border-t flex justify-end space-x-2">
+                <button id="toast-cancel" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md transition-colors font-medium">
+                    Hủy
+                </button>
+                <button id="toast-confirm" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors font-medium">
+                    Đồng ý
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Component thông báo nhanh -->
+    <div id="quick-toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-5 py-3 rounded-lg shadow-lg z-50 hidden transition-all duration-300 max-w-xs sm:max-w-sm w-auto mx-auto">
+        <div class="flex items-center">
+            <div id="quick-toast-icon" class="mr-3 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <span id="quick-toast-message" class="text-sm sm:text-base">Thông báo nhanh!</span>
+        </div>
+    </div>
+    
+    <script>
+        // Xử lý hiển thị nút cuộn lên đầu trang
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 300) {
+                $('#back-to-top').css({
+                    'opacity': '1',
+                    'transform': 'translateY(0)'
+                });
+            } else {
+                $('#back-to-top').css({
+                    'opacity': '0',
+                    'transform': 'translateY(20px)'
+                });
+            }
+        });
+        
+        // Xử lý sự kiện click nút cuộn lên đầu trang
+        $('#back-to-top').click(function() {
+            $('html, body').animate({scrollTop: 0}, 500);
+            return false;
+        });
+        
+        // Hàm hiển thị thông báo tùy chỉnh
+        function showCustomToast(options) {
+            // Mặc định các tùy chọn
+            const defaults = {
+                title: 'Thông báo',
+                message: '',
+                type: 'info', // info, success, warning, error
+                confirmText: 'Đồng ý',
+                cancelText: 'Hủy',
+                showCancel: false,
+                onConfirm: null,
+                onCancel: null
+            };
+            
+            const settings = {...defaults, ...options};
+            
+            // Cập nhật nội dung
+            $('#toast-title').text(settings.title);
+            $('#toast-body').html(settings.message);
+            $('#toast-confirm').text(settings.confirmText);
+            $('#toast-cancel').text(settings.cancelText);
+            
+            // Hiển thị/ẩn nút hủy
+            if (settings.showCancel) {
+                $('#toast-cancel').show();
+            } else {
+                $('#toast-cancel').hide();
+            }
+            
+            // Cập nhật màu sắc dựa trên loại thông báo
+            let headerClass = 'border-blue-200 bg-blue-50';
+            
+            switch (settings.type) {
+                case 'success':
+                    headerClass = 'border-green-200 bg-green-50';
+                    break;
+                case 'warning':
+                    headerClass = 'border-yellow-200 bg-yellow-50';
+                    break;
+                case 'error':
+                    headerClass = 'border-red-200 bg-red-50';
+                    break;
+                default: // info
+                    headerClass = 'border-blue-200 bg-blue-50';
+            }
+            
+            // Cập nhật lớp CSS
+            $('#toast-header').removeClass().addClass(`flex items-center justify-between px-4 py-3 border-b ${headerClass}`);
+            
+            // Hiển thị backdrop và toast
+            $('#toast-backdrop').removeClass('hidden').css('opacity', '1');
+            $('#custom-toast').removeClass('hidden').css('pointer-events', 'auto');
+            
+            // Animation hiển thị
+            setTimeout(() => {
+                $('#custom-toast > div').css({
+                    'opacity': '1',
+                    'transform': 'scale(1)'
+                });
+            }, 10);
+            
+            // Xử lý sự kiện nút đóng
+            $('#toast-close, #toast-cancel').off('click').on('click', function() {
+                closeCustomToast();
+                if (settings.onCancel && typeof settings.onCancel === 'function') {
+                    settings.onCancel();
+                }
+            });
+            
+            // Xử lý sự kiện nút xác nhận
+            $('#toast-confirm').off('click').on('click', function() {
+                closeCustomToast();
+                if (settings.onConfirm && typeof settings.onConfirm === 'function') {
+                    settings.onConfirm();
+                }
+            });
+        }
+        
+        // Hàm đóng thông báo tùy chỉnh
+        function closeCustomToast() {
+            $('#custom-toast > div').css({
+                'opacity': '0',
+                'transform': 'scale(0.95)'
+            });
+            
+            $('#toast-backdrop').css('opacity', '0');
+            
+            setTimeout(() => {
+                $('#custom-toast').addClass('hidden').css('pointer-events', 'none');
+                $('#toast-backdrop').addClass('hidden');
+            }, 300);
+        }
+        
+        // Hàm hiển thị thông báo nhanh
+        function showQuickToast(message, type = 'info', duration = 3000) {
+            // Cập nhật nội dung
+            $('#quick-toast-message').text(message);
+            
+            // Cập nhật icon dựa trên loại thông báo
+            let iconHTML = '';
+            let toastClass = 'bg-gray-800';
+            
+            switch (type) {
+                case 'success':
+                    iconHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+                    toastClass = 'bg-green-700';
+                    break;
+                case 'warning':
+                    iconHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>';
+                    toastClass = 'bg-yellow-700';
+                    break;
+                case 'error':
+                    iconHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+                    toastClass = 'bg-red-700';
+                    break;
+                default: // info
+                    iconHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+                    toastClass = 'bg-blue-700';
+            }
+            
+            $('#quick-toast-icon').html(iconHTML);
+            $('#quick-toast').removeClass('bg-gray-800 bg-blue-700 bg-green-700 bg-yellow-700 bg-red-700').addClass(toastClass);
+            
+            // Hiển thị toast và animation hiển thị
+            $('#quick-toast').removeClass('hidden').css({
+                'opacity': '0',
+                'transform': 'translate(-50%, 20px)'
+            });
+            
+            setTimeout(() => {
+                $('#quick-toast').css({
+                    'opacity': '1',
+                    'transform': 'translate(-50%, 0)'
+                });
+            }, 10);
+            
+            // Tự động ẩn sau thời gian chỉ định
+            if (window.quickToastTimeout) {
+                clearTimeout(window.quickToastTimeout);
+            }
+            
+            window.quickToastTimeout = setTimeout(() => {
+                $('#quick-toast').css({
+                    'opacity': '0',
+                    'transform': 'translate(-50%, 20px)'
+                });
+                
+                setTimeout(() => {
+                    $('#quick-toast').addClass('hidden');
+                }, 300);
+            }, duration);
+        }
+        
+        // Thay thế hàm alert mặc định trong ứng dụng
+        function customAlert(message) {
+            showCustomToast({
+                title: 'Thông báo',
+                message: message,
+                type: 'info',
+                showCancel: false
+            });
+        }
+        
+        // Thay thế hàm confirm mặc định trong ứng dụng
+        function customConfirm(message, onConfirm, onCancel) {
+            showCustomToast({
+                title: 'Xác nhận',
+                message: message,
+                type: 'warning',
+                showCancel: true,
+                onConfirm: onConfirm,
+                onCancel: onCancel
+            });
+        }
+    </script>
+    
+    <!-- Script đếm số câu hỏi và cập nhật UI -->
+    <script>
+        $(document).ready(function() {
+            // Đếm số câu hỏi trong mỗi chủ đề và cập nhật hiển thị
+            function updateQuestionCounts() {
+                if (typeof quizQuestions !== 'undefined') {
+                    // Các chủ đề và chủ đề card tương ứng
+                    const topicMapping = {
+                        0: 'bac-thuoc-va-khoi-nghia',  // Thứ nhất trong HTML - Thời kỳ Bắc thuộc
+                        1: 'thoi-ky-dai-viet',         // Thứ hai trong HTML - Thời kỳ Đại Việt
+                        2: 'cach-mang-viet-nam',       // Thứ ba trong HTML - Cách mạng Việt Nam
+                        3: 'viet-nam-hien-dai'         // Thứ tư trong HTML - Việt Nam hiện đại
+                    };
+                    
+                    // Cập nhật số câu hỏi cho từng chủ đề
+                    $('.topic-card').each(function(index) {
+                        let topicKey = '';
+                        let totalQuestions = 0;
+                        
+                        // Xác định chủ đề tương ứng dựa vào index
+                        if (index < 4) { // 4 chủ đề thông thường
+                            topicKey = topicMapping[index];
+                            totalQuestions = quizQuestions[topicKey].length;
+                            
+                            // Cập nhật số câu hỏi hiển thị cho chủ đề thông thường
+                            const countDisplay = $(this).find('.question-count');
+                            countDisplay.text(`${totalQuestions} câu hỏi`);
+                        } else {
+                            // Trường hợp đặc biệt: Chủ đề "Tạo ngẫu nhiên"
+                            // Tính tổng số câu hỏi từ tất cả các chủ đề
+                            let easyCount = 0;
+                            let mediumCount = 0;
+                            let hardCount = 0;
+                            
+                            Object.keys(quizQuestions).forEach(key => {
+                                quizQuestions[key].forEach(question => {
+                                    totalQuestions++;
+                                    if (question.difficulty === 'easy') easyCount++;
+                                    else if (question.difficulty === 'medium') mediumCount++;
+                                    else if (question.difficulty === 'hard') hardCount++;
+                                });
+                            });
+                            
+                            // Cập nhật số câu hỏi hiển thị cho chủ đề ngẫu nhiên
+                            const countDisplay = $(this).find('.question-count');
+                            countDisplay.html(`<span title="Tổng số: ${totalQuestions} câu hỏi">Đa dạng</span>`);
+                        }
+                    });
+                    
+                    console.log("Đã cập nhật số lượng câu hỏi cho các chủ đề");
+                } else {
+                    console.log("Chưa tìm thấy dữ liệu câu hỏi, sẽ thử lại sau");
+                    setTimeout(updateQuestionCounts, 500);
+                }
+            }
+            
+            // Gọi hàm cập nhật sau khi trang và các script đã tải xong
+            setTimeout(updateQuestionCounts, 1000);
+        });
+    </script>
+</body>
+</html> 
