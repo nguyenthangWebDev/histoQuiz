@@ -1,9 +1,16 @@
-const CACHE_NAME = 'histoquiz-cache-v1';
+const CACHE_NAME = 'histoquiz-cache-v2';
 const URLS_TO_CACHE = [
   './',
   './index.html',
   './script.js',
-  './questions.js'
+  './questions.js',
+  './assets/favicon/favicon.ico',
+  './assets/favicon/favicon-16x16.png',
+  './assets/favicon/favicon-32x32.png',
+  './assets/favicon/apple-touch-icon.png',
+  './assets/favicon/android-chrome-192x192.png',
+  './assets/favicon/android-chrome-512x512.png',
+  './assets/favicon/site.webmanifest'
 ];
 
 // Cài đặt Service Worker - Cache các tài nguyên

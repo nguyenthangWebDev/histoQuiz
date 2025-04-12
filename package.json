@@ -1,0 +1,21 @@
+{
+  "name": "histoquiz_v2.1",
+  "version": "1.0.0",
+  "description": "HistoQuiz là ứng dụng trắc nghiệm lịch sử Việt Nam giúp người dùng ôn tập và củng cố kiến thức lịch sử một cách thú vị và hiệu quả.",
+  "main": "questions.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-nguyenthang:nguyenthangWebDev/histoQuiz.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "sharp": "^0.34.1",
+    "to-ico": "^1.1.5"
+  }
+}
