@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập | HistoQuiz</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/dist/umd/supabase.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%);
+        }
+        .login-card {
+            background: white;
+            box-shadow: 0 4px 24px 0 rgba(59, 130, 246, 0.12);
+            transition: all 0.3s ease;
+        }
+        .login-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px 0 rgba(59, 130, 246, 0.16);
+        }
+        .logo-section {
+            background: linear-gradient(to right, #2563eb, #1d4ed8);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .input-field {
+            transition: all 0.2s ease;
+            border-radius: 0.75rem;
+        }
+        .input-field:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+        .submit-button {
+            background: linear-gradient(to right, #2563eb, #1d4ed8);
+            transition: all 0.3s ease;
+            border-radius: 0.75rem;
+            height: 44px;
+        }
+        .submit-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md p-8 rounded-2xl login-card">
+        <div class="flex flex-col items-center">
+            <div class="logo-section">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Đăng nhập HistoQuiz</h1>
+            <p class="text-gray-500 text-base mb-8">Chào mừng bạn quay trở lại! 👋</p>
+        </div>
+
+        <form id="login-form" class="space-y-5">
+            <div>
+                <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+                <input type="email" id="email" name="email" required 
+                    class="input-field w-full px-4 py-3 border border-gray-200 focus:outline-none text-gray-700" 
+                    placeholder="you@email.com">
+            </div>
+            <div>
+                <label for="password" class="block text-gray-700 font-medium mb-2">Mật khẩu</label>
+                <input type="password" id="password" name="password" required minlength="6" 
+                    class="input-field w-full px-4 py-3 border border-gray-200 focus:outline-none text-gray-700" 
+                    placeholder="Nhập mật khẩu">
+            </div>
+            <button type="submit" class="submit-button w-full flex items-center justify-center text-white font-medium text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                Đăng nhập
+            </button>
+        </form>
+
+        <div id="login-message" class="mt-4 text-center text-sm font-medium text-red-600"></div>
+
+        <div class="mt-8 text-center">
+            <p class="text-gray-600 mb-4">Hoặc đăng nhập với</p>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <button class="flex items-center justify-center px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                        <path fill="#EA4335" d="M12 5.04c2.17 0 4.1.72 5.63 1.92l4.25-4.25C19.27 0.47 15.91 0 12 0 7.31 0 3.23 2.7 1.26 6.63l4.97 3.85C7.39 7.52 9.48 5.04 12 5.04z"></path>
+                        <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"></path>
+                        <path fill="#FBBC05" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96L.33 17.43C2.29 21.44 6.37 24 12 24z"></path>
+                        <path fill="#34A853" d="M12 9.5c1.77 0 3.35.61 4.6 1.8L20.27 7c-2.09-1.95-4.81-3.15-8.27-3.15-5.63 0-9.71 2.56-11.67 6.58l4.97 3.85C6.22 11.52 8.31 9.5 12 9.5z"></path>
+                    </svg>
+                    Google
+                </button>
+                <button class="flex items-center justify-center px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                        <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.622h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                    Facebook
+                </button>
+            </div>
+            <div class="text-gray-500">
+                Chưa có tài khoản? 
+                <a href="register.html" class="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
+                    Đăng ký ngay
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase config
+        const supabaseUrl = 'https://qmiktgihqyapidtbopoh.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtaWt0Z2locXlhcGlkdGJvcG9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQzOTM5MzYsImV4cCI6MjA1OTk2OTkzNn0.HiHokB_GgLRJMQpI8JXrioY7rgG8UagoGWeTTx7Fhvw';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        
+        // Kiểm tra nếu đã đăng nhập thì chuyển sang trang chủ
+        supabase.auth.getUser().then(({ data, error }) => {
+            if (data && data.user) {
+                window.location.href = 'index.html';
+            }
+        }); 
+
+        // Xử lý đăng nhập
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Thêm loading state
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalContent = submitButton.innerHTML;
+            submitButton.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            `;
+            submitButton.disabled = true;
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                
+                document.getElementById('login-message').textContent = '';
+                window.location.href = 'index.html';
+            } catch (error) {
+                document.getElementById('login-message').textContent = 'Email hoặc mật khẩu không chính xác';
+                // Khôi phục trạng thái nút submit
+                submitButton.innerHTML = originalContent;
+                submitButton.disabled = false;
+            }
+        });
+
+        // Xử lý đăng nhập với social
+        document.querySelectorAll('.grid button').forEach(button => {
+            button.addEventListener('click', () => {
+                alert('Tính năng đang được phát triển! 🚀');
+            });
+        });
+    </script>
+</body>
+</html>

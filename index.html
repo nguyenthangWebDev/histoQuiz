@@ -50,235 +50,592 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style/style.css">
+    
     <script src="questions.js"></script>
     <script src="script.js"></script>
-    <script>
-        // Đăng ký Service Worker nếu trình duyệt hỗ trợ
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(function(registration) {
-                        console.log('Service Worker đăng ký thành công với phạm vi: ', registration.scope);
-                    })
-                    .catch(function(error) {
-                        console.log('Đăng ký Service Worker thất bại: ', error);
-                    });
-            });
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/dist/umd/supabase.min.js"></script>
+
     <style>
-        /* Base styles for all screens */
-        .option-box.selected {
-            background-color: #dbeafe;
-            border-color: #3b82f6;
+        /* Login modal styles */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        
-        .answer-option {
-            transition: all 0.3s ease;
-        }
-        
-        .answer-option:hover {
-            background-color: #f0f9ff;
-        }
-        
-        .answer-selected {
-            background-color: #dbeafe !important;
-            border-color: #3b82f6 !important;
-        }
-        
-        .answer-correct {
-            background-color: #d1fae5 !important;
-            border-color: #10b981 !important;
-        }
-        
-        .answer-wrong {
-            background-color: #fee2e2 !important;
-            border-color: #ef4444 !important;
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #c5c5c5;
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a3a3a3;
-        }
-        
-        /* Topic card structure */
-        .topic-card {
+
+        .login-modal.active {
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
+            opacity: 1;
         }
-        
-        .card-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
+
+        .login-modal-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            margin: auto;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
         }
-        
-        .card-content svg {
-            margin-bottom: 0.5rem;
+
+        .login-modal.active .login-modal-content {
+            transform: translateY(0);
         }
-        
-        .topic-card .text-base {
-            font-size: 1rem !important;
+
+        .login-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
         }
-        
-        .topic-card .question-count {
+
+        .login-modal-close:hover {
+            background: #f3f4f6;
+        }
+
+        .login-button {
+            background: linear-gradient(to right, #2563eb, #1d4ed8);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
             font-weight: 500;
+            transition: all 0.2s;
+            width: 100%;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
-        
-        /* Desktop improvements */
-        @media (min-width: 768px) {
-            .grid-cols-2 {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-            
-            .topic-card {
-                min-height: 250px;
-            }
-            
-            .topic-card h3 {
-                font-size: 1.25rem !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
-                padding: 0 0.5rem !important;
-                text-transform: uppercase !important;
-            }
-            
-            .topic-card p {
-                font-size: 0.9rem;
-                line-height: 1.5;
-                height: 4.5em;
-                overflow: hidden;
-                display: -webkit-box;
-                -webkit-line-clamp: 3;
-                -webkit-box-orient: vertical;
-            }
-            
-            .topic-card .question-count {
-                font-size: 0.6rem;
-                padding: 0.25rem 0.75rem;
-            }
-            
-            .topic-card .text-base {
-                font-weight: 500;
-            }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        
-        @media (min-width: 1024px) {
-            .grid-cols-3 {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-            
-            .topic-card {
-                min-height: 270px;
-            }
+
+        .register-button {
+            background: white;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            width: 100%;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
-        
-        @media (max-width: 640px) {
-            .answer-option {
-                padding: 0.75rem !important;
-                margin-bottom: 0.5rem !important;
-            }
-            
-            #timer {
-                font-size: 1rem !important;
-            }
-            
-            body {
-                padding-bottom: 2rem;
-            }
-            
-            .topic-card {
-                margin-bottom: 1.25rem;
-                min-height: 230px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                padding: 1.25rem !important;
-            }
-            
-            #topic-selection {
-                padding: 1.5rem 1.25rem !important;
-            }
-            
-            .question-count {
-                padding: 0.3rem 0.75rem;
-                font-weight: 500;
-            }
-            
-            .card-content {
-                margin-bottom: 1rem;
-            }
-            
-            h3.font-semibold {
-                font-size: 1.25rem !important;
-                margin-bottom: 0.5rem !important;
-                text-transform: uppercase !important;
-            }
-            
-            .topic-card p {
-                font-size: 0.9rem !important;
-                line-height: 1.4;
-            }
-            
-            .topic-card .text-base {
-                font-size: 1.1rem !important;
-                font-weight: 600;
-            }
+
+        .register-button:hover {
+            background: #f0f7ff;
+            transform: translateY(-2px);
         }
-        
-        @media (min-width: 1280px) {
-            .topic-card {
-                min-height: 280px;
-            }
-            
-            .topic-card h3 {
-                font-size: 1.3rem;
-                margin-bottom: 0.75rem;
-            }
-            
-            .topic-card p {
-                font-size: 1rem;
-                line-height: 1.6;
-                height: 4.8em;
-            }
-            
-            .container {
-                max-width: 1200px;
-            }
-            
-            #topic-selection .grid {
-                column-gap: 1.5rem;
-            }
+
+        .social-login-button {
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .social-login-button:hover {
+            background: #f9fafb;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
     </style>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="login-modal">
+        <div class="login-modal-content">
+            <button class="login-modal-close" id="login-modal-close">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Chào mừng đến với HistoQuiz! 👋</h3>
+                <p class="text-gray-600 mb-6">Đăng nhập để lưu tiến độ học tập và theo dõi kết quả của bạn</p>
+            </div>
+
+            <div class="space-y-4">
+                <a href="login.html" class="login-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                    </svg>
+                    Đăng nhập
+                </a>
+
+                <a href="register.html" class="register-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                    </svg>
+                    Tạo tài khoản mới
+                </a>
+
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Hoặc đăng nhập với</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button class="social-login-button">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="#EA4335" d="M12 5.04c2.17 0 4.1.72 5.63 1.92l4.25-4.25C19.27 0.47 15.91 0 12 0 7.31 0 3.23 2.7 1.26 6.63l4.97 3.85C7.39 7.52 9.48 5.04 12 5.04z"></path>
+                            <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"></path>
+                            <path fill="#FBBC05" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96L.33 17.43C2.29 21.44 6.37 24 12 24z"></path>
+                            <path fill="#34A853" d="M12 9.5c1.77 0 3.35.61 4.6 1.8L20.27 7c-2.09-1.95-4.81-3.15-8.27-3.15-5.63 0-9.71 2.56-11.67 6.58l4.97 3.85C6.22 11.52 8.31 9.5 12 9.5z"></path>
+                        </svg>
+                        Google
+                    </button>
+                    <button class="social-login-button">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+                        </a>
+                        <a href="#" class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-full transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                        </a>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <p class="flex items-center mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            info.histoquiz@gmail.com
+                        </p>
+                        <p class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Hà Nội, Việt Nam
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Thay bằng URL và KEY của bạn
+        const supabaseUrl = 'https://qmiktgihqyapidtbopoh.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtaWt0Z2locXlhcGlkdGJvcG9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQzOTM5MzYsImV4cCI6MjA1OTk2OTkzNn0.HiHokB_GgLRJMQpI8JXrioY7rgG8UagoGWeTTx7Fhvw';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+        // Kiểm tra session khi trang tải
+        async function checkSession() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) {
+                console.error('Lỗi khi kiểm tra session:', error.message);
+                return;
+            }
+
+            const avatarSection = document.getElementById('avatar-section');
+            const authButtons = document.getElementById('auth-buttons');
+
+            if (!session) {
+                // Nếu không có session, hiển thị nút đăng nhập/đăng ký
+                avatarSection.classList.add('hidden');
+                authButtons.classList.remove('hidden');
+                showLoginModal();
+            } else {
+                const { data: { user }, error: userError } = await supabase.auth.getUser();
+                if (userError) {
+                    console.error('Lỗi khi lấy thông tin user:', userError.message);
+                    return;
+                }
+
+                if (user) {
+                    // Hiển thị avatar và thông tin người dùng
+                    avatarSection.classList.remove('hidden');
+                    authButtons.classList.add('hidden');
+                    $('#user-avatar-container').attr('src', user.user_metadata.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix');
+                    $('#user-name-container').text(user.user_metadata.name || 'Người dùng');
+                    $('#user-email-container').text(user.email || '');
+                }
+            }
+        }
+
+        // Hiển thị modal đăng nhập
+        function showLoginModal() {
+            const modal = document.getElementById('login-modal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Đóng modal đăng nhập
+        function closeLoginModal() {
+            const modal = document.getElementById('login-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Xử lý đóng modal
+            const closeButton = document.getElementById('login-modal-close');
+            const modal = document.getElementById('login-modal');
+
+            closeButton?.addEventListener('click', closeLoginModal);
+
+            // Đóng modal khi click bên ngoài
+            modal?.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeLoginModal();
+                }
+            });
+
+            // Xử lý các nút social login
+            const socialButtons = document.querySelectorAll('.social-login-button');
+            socialButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Thêm xử lý đăng nhập bằng mạng xã hội tại đây
+                    showQuickToast('Tính năng đang được phát triển! 🚀', 'info', 3000);
+                });
+            });
+        });
+
+        // Gọi hàm kiểm tra session khi trang tải
+        checkSession();
+
+        // Xử lý đăng xuất
+        async function handleLogout() {
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+
+                // Cập nhật UI sau khi đăng xuất
+                const avatarSection = document.getElementById('avatar-section');
+                const authButtons = document.getElementById('auth-buttons');
+                
+                avatarSection.classList.add('hidden');
+                authButtons.classList.remove('hidden');
+                
+                // Đóng dropdown menu
+                document.getElementById('dropdown-menu').classList.remove('active');
+                
+                // Hiển thị thông báo thành công
+                showQuickToast('Đăng xuất thành công! Hẹn gặp lại bạn 👋', 'success', 3000);
+                
+                // Tải lại trang sau 1 giây
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } catch (error) {
+                console.error('Lỗi khi đăng xuất:', error.message);
+                showQuickToast('Có lỗi xảy ra khi đăng xuất. Vui lòng thử lại! 😢', 'error', 3000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Avatar dropdown
+            const avatarButton = document.getElementById('avatar-button');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            
+            avatarButton?.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('active');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (avatarButton && !avatarButton.contains(e.target)) {
+                    dropdownMenu.classList.remove('active');
+                }
+            });
+
+            // Mobile menu
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton?.addEventListener('click', function() {
+                mobileMenu.classList.add('active');
+                document.getElementById('mobile-menu-backdrop').classList.add('active');
+                document.body.style.overflow = 'hidden';
+                updateMobileUserInfo();
+            });
+
+            // Đóng mobile menu
+            document.getElementById('mobile-menu-close')?.addEventListener('click', function() {
+                closeMobileMenu();
+            });
+
+            // Đóng menu khi click vào backdrop
+            document.getElementById('mobile-menu-backdrop')?.addEventListener('click', function() {
+                closeMobileMenu();
+            });
+
+            // Hàm đóng mobile menu
+            function closeMobileMenu() {
+                mobileMenu.classList.remove('active');
+                document.getElementById('mobile-menu-backdrop').classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            // Cập nhật thông tin người dùng trong mobile menu
+            async function updateMobileUserInfo() {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                const mobileUserSection = document.getElementById('mobile-menu-user');
+                const mobileFooter = document.getElementById('mobile-menu-footer');
+
+                if (!session) {
+                    // Nếu chưa đăng nhập
+                    document.getElementById('mobile-user-name').textContent = 'Đăng nhập';
+                    document.getElementById('mobile-user-email').textContent = 'Vui lòng đăng nhập để tiếp tục';
+                    document.getElementById('mobile-user-avatar').src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Guest';
+                    mobileUserSection.style.cursor = 'pointer';
+                    mobileUserSection.onclick = function() {
+                        closeMobileMenu();
+                        showLoginModal();
+                    };
+                    // Ẩn phần đăng xuất
+                    mobileFooter.style.display = 'none';
+                } else {
+                    // Nếu đã đăng nhập
+                    const { data: { user }, error: userError } = await supabase.auth.getUser();
+                    if (user) {
+                        document.getElementById('mobile-user-name').textContent = user.user_metadata.name || 'Người dùng';
+                        document.getElementById('mobile-user-email').textContent = user.email || '';
+                        document.getElementById('mobile-user-avatar').src = user.user_metadata.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix';
+                        mobileUserSection.style.cursor = 'default';
+                        mobileUserSection.onclick = null;
+                        // Hiển thị phần đăng xuất
+                        mobileFooter.style.display = 'block';
+                    }
+                }
+            }
+
+            // Đăng xuất từ mobile menu
+            document.getElementById('mobile-logout-button')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeMobileMenu();
+                
+                // Hiển thị hộp thoại xác nhận giống như nút đăng xuất chính
+                showCustomToast({
+                    title: 'Tạm biệt? 👋',
+                    message: `
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <svg class="w-16 h-16 mx-auto text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                            </div>
+                            <p class="text-gray-600 mb-2">Bạn có chắc chắn muốn đăng xuất khỏi HistoQuiz?</p>
+                            <p class="text-sm text-gray-500">Bạn có thể đăng nhập lại bất cứ lúc nào.</p>
+                        </div>
+                    `,
+                    type: 'warning',
+                    showCancel: true,
+                    confirmText: 'Đăng xuất',
+                    cancelText: 'Ở lại',
+                    onConfirm: handleLogout
+                });
+            });
+        });
+    </script>
 </head>
 <body class="bg-gray-100 font-['Roboto']">
     <div class="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-3xl">
         <div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg mb-6 text-center text-sm">
             <strong>Phiên bản Beta:</strong> Chúng tôi đang thử nghiệm HistoQuiz. Mọi ý kiến đóng góp vui lòng gửi về <a href="mailto:info.histoquiz@gmail.com" class="underline">info.histoquiz@gmail.com</a>
         </div>
-        <header class="text-center mb-6 sm:mb-12">
-            <h1 class="text-3xl sm:text-4xl font-bold text-blue-800 mb-2 sm:mb-4">HistoQuiz</h1>
-            <p class="text-lg sm:text-xl text-gray-600">Khám phá Lịch sử Việt Nam qua các câu hỏi trắc nghiệm</p>
+        <header class="header">
+            <div class="header-container">
+                <div class="logo-section">
+                    <a href="/" class="flex items-center gap-3">
+                        <div class="logo-image bg-gradient-to-br from-blue-500 to-blue-600 p-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </div>
+                        <span class="logo-text">HistoQuiz</span>
+                    </a>
+                </div>
+
+                <div class="user-section">
+                    <!-- Nút đăng nhập/đăng ký cho người dùng chưa đăng nhập -->
+                    <div class="auth-buttons hidden" id="auth-buttons">
+                        <a href="login.html" class="inline-flex items-center justify-center h-10 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                            </svg>
+                            <span>Đăng nhập</span>
+                        </a>
+                        <a href="register.html" class="inline-flex items-center justify-center h-10 px-4 py-2 bg-white text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors duration-200 text-sm font-medium ml-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
+                            <span>Đăng ký</span>
+                        </a>
+                    </div>
+
+                    <!-- Avatar và dropdown cho người dùng đã đăng nhập -->
+                    <div class="avatar-dropdown hidden" id="avatar-section">
+                        <button class="avatar-button" id="avatar-button">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Avatar" class="avatar-image" id="user-avatar-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu" id="dropdown-menu">
+                            <div class="p-3 border-b border-gray-100">
+                                <div class="font-medium text-sm" id="user-name-container"></div>
+                                <div class="text-xs text-gray-500" id="user-email-container"></div>
+                            </div>
+                            <a href="#" class="dropdown-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                Hồ sơ cá nhân
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                                Thống kê
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Cài đặt
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item text-red-600 hover:text-red-700 hover:bg-red-50" id="logout-button">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                Đăng xuất
+                            </a>
+                        </div>
+                    </div>
+
+                    <button class="mobile-menu-button" id="mobile-menu-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mobile-menu" id="mobile-menu">
+                <div class="mobile-menu-header">
+                    <h3 class="font-semibold text-lg">Menu</h3>
+                    <button class="mobile-menu-close" id="mobile-menu-close">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Phần thông tin người dùng -->
+                <div class="mobile-menu-user" id="mobile-menu-user">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Avatar" id="mobile-user-avatar">
+                    <div class="mobile-menu-user-info">
+                        <div class="mobile-menu-user-name" id="mobile-user-name">Đăng nhập</div>
+                        <div class="mobile-menu-user-email" id="mobile-user-email">Vui lòng đăng nhập để tiếp tục</div>
+                    </div>
+                </div>
+
+                <!-- Liên kết điều hướng -->
+                <a href="#" class="mobile-nav-link active">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Trang chủ</span>
+                </a>
+                <a href="#" class="mobile-nav-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    <span>Chủ đề</span>
+                </a>
+                <a href="#" class="mobile-nav-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <span>Xếp hạng</span>
+                </a>
+                <a href="#" class="mobile-nav-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Hướng dẫn</span>
+                </a>
+
+                <!-- Phần cuối cho đăng xuất khi đã đăng nhập -->
+                <div class="mobile-menu-footer" id="mobile-menu-footer">
+
+                    <!-- Hồ sơ cá nhân -->
+                    <a href="#" class="mobile-nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Hồ sơ cá nhân</span>
+                    </a>
+                    <!-- Thông kê-->
+                    <a href="#" class="mobile-nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <span>Thông kê</span>
+                    </a>
+                    <!-- Cài đặt-->
+                    <a href="#" class="mobile-nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <span>Cài đặt</span>
+                    </a>
+                    <!-- Đăng xuất -->
+                    <a href="#" class="mobile-nav-link" id="mobile-logout-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Đăng xuất</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Thêm backdrop cho mobile menu -->
+            <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
         </header>
 
         <!-- Phần chọn chủ đề -->
-        <div id="topic-selection" class="bg-white rounded-lg shadow-lg p-5 sm:p-6 mb-6 sm:mb-8">
+        <div id="topic-selection" class="bg-white  shadow-lg p-5 sm:p-6 mb-6 sm:mb-8">
             <h2 class="text-2xl sm:text-2xl font-semibold mb-5 sm:mb-6 text-center">Chọn chủ đề</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                 <div class="topic-card bg-gradient-to-br from-amber-50 to-amber-100 p-5 sm:p-6 rounded-xl cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-amber-300">
